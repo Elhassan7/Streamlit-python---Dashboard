@@ -1,4 +1,5 @@
 
+from numpy import average
 import streamlit as st
 import pandas as pd
 
@@ -23,6 +24,28 @@ Gender= st.sidebar.multiselect("Select The Gender :",
                         default=df["Gender"].unique())
 
 
-df_city= df.query("City== @city & Customer_type==@customer_type & Gender==@Gender")
+df_selection= df.query("City== @city & Customer_type==@customer_type & Gender==@Gender")
 
-st.dataframe(df_city)
+
+
+#---------------Main Page-------------------
+
+st.title(":bar_chart:Sales Dashboard")
+st.markdown("##")
+
+#-------- KPI's ------------
+total_sales= df_selection["Total"].sum()
+average_rating= round(df_selection["Rating"].mean(), 1)
+star_rating=":star:" * int(round(average_rating,0))
+average_sales_trans= round(df_selection["Total"].mean(), 2)
+
+left_column, midle_column, right_column = st.columns(3)
+
+with left_column:
+    st.subheader("Total Sales : ")
+    st.subheader(f"US $ {total_sales:,}")
+
+with midle_column:
+    st.subheader("Average Rating : ")
+    st.subheader(f"")
+st.dataframe(df_selection)
