@@ -1,6 +1,8 @@
 
+from matplotlib.pyplot import figure
 from numpy import average
 import streamlit as st
+import plotly.express as px
 import pandas as pd
 
 st.set_page_config(page_title= "Sales Dashboard",
@@ -31,12 +33,13 @@ df_selection= df.query("City== @city & Customer_type==@customer_type & Gender==@
 #---------------Main Page-------------------
 
 st.title(":bar_chart:Sales Dashboard")
-st.markdown("######")
+st.markdown("##")
 
 #--------TOP KPI's ------------
-total_sales= df_selection["Total"].sum()
+total_sales= int(df_selection["Total"].sum())
 average_rating= round(df_selection["Rating"].mean(), 1)
-star_rating=":star:" * int(round(average_rating,0))
+star_rating=" :star:" * int(round(average_rating,0))
+
 average_sales_trans= round(df_selection["Total"].mean(), 2)
 
 left_column, midle_column, right_column = st.columns(3)
@@ -55,7 +58,24 @@ with right_column:
 
 st.markdown("---")
 
-#------ Sale by product line [line Chart]
+#------ Sale by product line [line Chart] -------------
+sales_by_product= (
+    df_selection.groupby(by=["Product line"]).sum()[["Total"]].sort_values(by="Total")
+)
 
+fig_product_sales= px.bar(
+    sales_by_product,
+    x= "Total",
+    y= sales_by_product.index,
+    orientation= 'h',
+    title= "<b>Sales by Product Line</b>",
+    color_discrete_sequence= ["#0083B8"] * len(sales_by_product),
+    template= "plotly_white",
+)
 
-st.dataframe(df_selection)
+fig_product_sales.update_layout(
+    plot_bgcolor="rgba(0,0,0,0)",
+    xaxis=(dict(showgrid=False))
+)
+
+st.plotly_chart(fig_product_sales)
