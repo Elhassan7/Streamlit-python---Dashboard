@@ -106,9 +106,8 @@ fig_hourly_sales = px.bar(
     template="plotly_white",
 )
 
+#---------- add line to the extremity of bar chart ---------
 import plotly.graph_objects as go
-
-
 fig_hourly_sales.add_trace(
     go.Scatter(
         x=sales_by_hour.index,
