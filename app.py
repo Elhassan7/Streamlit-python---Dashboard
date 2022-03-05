@@ -1,6 +1,6 @@
 
 from matplotlib.pyplot import figure
-from numpy import average
+from numpy import NaN, average
 import streamlit as st
 import plotly.express as px
 import pandas as pd
@@ -45,11 +45,18 @@ st.title(":bar_chart:Sales Dashboard")
 st.markdown("##")
 
 #--------TOP KPI's ------------
-total_sales= int(df_selection["Total"].sum())
-average_rating= round(df_selection["Rating"].mean(), 1)
-star_rating=" :star:" * int(round(average_rating,0))
+if not df_selection.empty:
+    total_sales= int(df_selection["Total"].sum())
+    average_rating= round(df_selection["Rating"].mean(), 1)
+    star_rating=" :star:" * int(round(average_rating,0))
+    average_sales_trans= round(df_selection["Total"].mean(), 2)
 
-average_sales_trans= round(df_selection["Total"].mean(), 2)
+else: 
+    total_sales=0
+    average_rating= 0
+    star_rating=" :star:" * 1
+    average_sales_trans= 0
+
 
 left_column, midle_column, right_column = st.columns(3)
 
@@ -97,6 +104,18 @@ fig_hourly_sales = px.bar(
     title="<b>Sales by hour</b>",
     color_discrete_sequence=["#0083B8"] * len(sales_by_hour),
     template="plotly_white",
+)
+
+import plotly.graph_objects as go
+
+
+fig_hourly_sales.add_trace(
+    go.Scatter(
+        x=sales_by_hour.index,
+        y=sales_by_hour.Total,
+        mode="lines",
+        line=go.scatter.Line(color="#e3a812"),
+        showlegend=False)
 )
 
 fig_hourly_sales.update_layout(
