@@ -31,9 +31,9 @@ df_selection= df.query("City== @city & Customer_type==@customer_type & Gender==@
 #---------------Main Page-------------------
 
 st.title(":bar_chart:Sales Dashboard")
-st.markdown("##")
+st.markdown("######")
 
-#-------- KPI's ------------
+#--------TOP KPI's ------------
 total_sales= df_selection["Total"].sum()
 average_rating= round(df_selection["Rating"].mean(), 1)
 star_rating=":star:" * int(round(average_rating,0))
@@ -47,5 +47,15 @@ with left_column:
 
 with midle_column:
     st.subheader("Average Rating : ")
-    st.subheader(f"")
+    st.subheader(f"{average_rating} {star_rating}")
+
+with right_column:
+    st.subheader("Average Sales per transaction : ")
+    st.subheader(f"US $ {average_sales_trans}")
+
+st.markdown("---")
+
+#------ Sale by product line [line Chart]
+
+
 st.dataframe(df_selection)
