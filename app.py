@@ -9,7 +9,16 @@ st.set_page_config(page_title= "Sales Dashboard",
                     page_icon=":bar_chart:",
                     layout='wide')
 
-df= pd.read_csv("supermarkt_sales.csv")
+@st.cache
+def get_data_from_csv():
+    df= pd.read_csv("supermarkt_sales.csv")
+
+    #------- Add hour's to dataframe ------------------
+    df["hour"]= pd.to_datetime(df["Time"], format="%H:%M").dt.hour
+
+    return df
+
+df= get_data_from_csv()
 
 #-----------SideBar-------------
 st.sidebar.header("Filtering by :")
@@ -78,4 +87,35 @@ fig_product_sales.update_layout(
     xaxis=(dict(showgrid=False))
 )
 
-st.plotly_chart(fig_product_sales)
+
+# SALES BY HOUR [BAR CHART]
+sales_by_hour = df_selection.groupby(by=["hour"]).sum()[["Total"]]
+fig_hourly_sales = px.bar(
+    sales_by_hour,
+    x=sales_by_hour.index,
+    y="Total",
+    title="<b>Sales by hour</b>",
+    color_discrete_sequence=["#0083B8"] * len(sales_by_hour),
+    template="plotly_white",
+)
+
+fig_hourly_sales.update_layout(
+    xaxis=dict(tickmode="linear"),
+    plot_bgcolor="rgba(0,0,0,0)",
+    yaxis=(dict(showgrid=False)),
+)
+
+#-------------------------
+left_column, right_column = st.columns(2)
+left_column.plotly_chart(fig_hourly_sales, use_container_width=True)
+right_column.plotly_chart(fig_product_sales, use_container_width=True)
+
+# ---- HIDE STREAMLIT STYLE ----
+hide_st_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_st_style, unsafe_allow_html=True)
