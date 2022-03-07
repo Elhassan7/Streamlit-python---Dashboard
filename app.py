@@ -1,5 +1,4 @@
 
-from matplotlib.pyplot import figure
 from numpy import NaN, average
 import streamlit as st
 import plotly.express as px
