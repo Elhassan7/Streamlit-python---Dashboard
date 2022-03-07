@@ -49,12 +49,18 @@ if not df_selection.empty:
     average_rating= round(df_selection["Rating"].mean(), 1)
     star_rating=" :star:" * int(round(average_rating,0))
     average_sales_trans= round(df_selection["Total"].mean(), 2)
+    #------ Sale by product line [line Chart] -------------
+    sales_by_product= (
+        df_selection.groupby(by=["Product line"]).sum()[["Total"]].sort_values(by="Total")
+    )
 
 else: 
     total_sales=0
     average_rating= 0
     star_rating=" :star:" * 1
     average_sales_trans= 0
+
+    sales_by_product= pd.DataFrame([0], columns=[["Total"]])
 
 
 left_column, midle_column, right_column = st.columns(3)
@@ -73,10 +79,7 @@ with right_column:
 
 st.markdown("---")
 
-#------ Sale by product line [line Chart] -------------
-sales_by_product= (
-    df_selection.groupby(by=["Product line"]).sum()[["Total"]].sort_values(by="Total")
-)
+#------Plot Sale by product line [line Chart] -------------
 
 fig_product_sales= px.bar(
     sales_by_product,
@@ -98,7 +101,7 @@ fig_product_sales.update_layout(
 sales_by_hour = df_selection.groupby(by=["hour"]).sum()[["Total"]]
 fig_hourly_sales = px.bar(
     sales_by_hour,
-    x=sales_by_hour.index,
+    x= sales_by_hour.index,
     y="Total",
     title="<b>Sales by hour</b>",
     color_discrete_sequence=["#0083B8"] * len(sales_by_hour),
