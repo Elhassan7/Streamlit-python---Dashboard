@@ -78,7 +78,7 @@ st.markdown("---")
 sales_by_product= (
         df_selection.groupby(by=["Product line"]).sum()[["Total"]].sort_values(by="Total")
     )
-    
+
 fig_product_sales= px.bar(
     sales_by_product,
     x= "Total",
@@ -118,9 +118,9 @@ fig_hourly_sales.add_trace(
 )
 
 fig_hourly_sales.update_layout(
-    xaxis=dict(tickmode="linear"),
-    plot_bgcolor="rgba(0,0,0,0)",
-    yaxis=(dict(showgrid=False)),
+    xaxis= dict(tickmode="linear"),
+    plot_bgcolor= "rgba(0,0,0,0)",
+    yaxis= (dict(showgrid=False)),
 )
 
 #-------------------------
